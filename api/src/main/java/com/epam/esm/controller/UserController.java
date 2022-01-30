@@ -3,6 +3,7 @@ package com.epam.esm.controller;
 import com.epam.esm.hateoas.HateoasAdder;
 import com.epam.esm.repository.dto.UserDto;
 import com.epam.esm.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Min;
@@ -55,5 +56,13 @@ public class UserController {
         return userService.readAll(page, size).stream()
                 .peek(userHateoasAdder::addLinks)
                 .collect(Collectors.toList());
+    }
+
+    @PostMapping("/register")
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserDto saveUser(@PathVariable UserDto userDto) {
+        UserDto savedUser = userService.saveUser(userDto);
+        userHateoasAdder.addLinks(savedUser);
+        return savedUser;
     }
 }

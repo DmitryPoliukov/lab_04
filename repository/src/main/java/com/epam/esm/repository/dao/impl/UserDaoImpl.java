@@ -3,6 +3,7 @@ package com.epam.esm.repository.dao.impl;
 import com.epam.esm.repository.dao.PaginationHandler;
 import com.epam.esm.repository.dao.UserDao;
 import com.epam.esm.repository.entity.User;
+import com.epam.esm.repository.exception.NullParameterException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,6 +46,22 @@ public class UserDaoImpl implements UserDao {
         TypedQuery<User> typedQuery = entityManager.createQuery(select);
         paginationHandler.setPageToQuery(typedQuery, page, size);
         return typedQuery.getResultList();
+    }
 
+    @Override
+    public User saveUser(User user) {
+        if (user == null) {
+            throw new NullParameterException("Null parameter in save user");
+        }
+        entityManager.persist(user);
+        return user;
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        if (email == null) {
+            throw new NullParameterException("Null parameter in fing user by email");
+        }
+        return Optional.ofNullable(entityManager.find(User.class, email));
     }
 }

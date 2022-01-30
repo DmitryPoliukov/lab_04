@@ -10,5 +10,7 @@ public interface UserService {
 
     List<UserDto> readAll(int page, int size);
 
+    UserDto saveUser(UserDto userDto);
+
 
 }

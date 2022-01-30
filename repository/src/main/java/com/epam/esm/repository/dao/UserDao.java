@@ -11,4 +11,8 @@ public interface UserDao {
 
     List<User> readAll(int page, int size);
 
+    User saveUser(User user);
+
+    Optional<User> findByEmail(String email);
+
 }
