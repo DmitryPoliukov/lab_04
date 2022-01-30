@@ -22,6 +22,16 @@ public class User {
     @Column
     private String surname;
 
+    @Column
+    private String email;
+
+    @Column
+    private String password;
+
+    @Column
+    @Enumerated(value = EnumType.STRING)
+    private Role role;
+
     @OneToMany(
             mappedBy = "user",
             fetch = FetchType.LAZY,
@@ -38,6 +48,16 @@ public class User {
         this.orders = orders;
     }
 
+    public User(int id, String name, String surname, String email, String password, Role role, List<Order> orders) {
+        this.id = id;
+        this.name = name;
+        this.surname = surname;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.orders = orders;
+    }
+
     public User(String name, String surname) {
         this.name = name;
         this.surname = surname;
@@ -48,6 +68,9 @@ public class User {
         userDto.setId(this.id);
         userDto.setName(this.name);
         userDto.setSurname(this.surname);
+        userDto.setEmail(this.email);
+        userDto.setPassword(this.password);
+        userDto.setRole(this.role);
         return userDto;
     }
 
@@ -73,6 +96,30 @@ public class User {
 
     public void setSurname(String surname) {
         this.surname = surname;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public List<Order> getOrders() {

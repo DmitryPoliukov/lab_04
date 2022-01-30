@@ -1,9 +1,13 @@
 package com.epam.esm.repository.dto;
 
+import com.epam.esm.repository.entity.Role;
 import com.epam.esm.repository.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.hateoas.RepresentationModel;
 
+import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +22,12 @@ public class UserDto extends RepresentationModel<UserDto> {
     @Size(min = 1,max = 45, message = "User surname length should be from 1 to 45")
     private String surname;
 
+    private String email;
+
+    private String password;
+
+    private Role role;
+
     @JsonIgnore
     private List<OrderDto> ordersDto = new ArrayList<>();
 
@@ -28,6 +38,9 @@ public class UserDto extends RepresentationModel<UserDto> {
         entityUser.setId(this.id);
         entityUser.setName(this.name);
         entityUser.setSurname(this.surname);
+        entityUser.setEmail(this.email);
+        entityUser.setPassword(this.password);
+        entityUser.setRole(this.role);
         return entityUser;
     }
 
@@ -55,6 +68,30 @@ public class UserDto extends RepresentationModel<UserDto> {
         this.surname = surname;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
     public List<OrderDto> getOrdersDto() {
         return ordersDto;
     }
@@ -62,6 +99,7 @@ public class UserDto extends RepresentationModel<UserDto> {
     public void setOrdersDto(List<OrderDto> ordersDto) {
         this.ordersDto = ordersDto;
     }
+
 
     @Override
     public boolean equals(Object o) {
