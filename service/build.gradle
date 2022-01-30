@@ -1,0 +1,39 @@
+plugins {
+    id 'java'
+
+    id 'org.springframework.boot' version '2.4.2' apply false
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+}
+
+version 'unspecified'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':repository')
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation group: 'org.hibernate', name: 'hibernate-core', version: '5.4.27.Final'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-hateoas'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
+    implementation group: 'org.hibernate', name: 'hibernate-validator', version: '6.1.5.Final'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.7.0'
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.7.0'
+    testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '3.7.0'
+
+}
+
+dependencyManagement {
+    imports {
+        mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+    }
+}
+
+tasks.withType(Test) {
+    useJUnitPlatform()
+}
