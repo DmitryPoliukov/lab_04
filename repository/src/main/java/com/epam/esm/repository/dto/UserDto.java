@@ -111,6 +111,9 @@ public class UserDto extends RepresentationModel<UserDto> {
         if (id != userDto.id) return false;
         if (name != null ? !name.equals(userDto.name) : userDto.name != null) return false;
         if (surname != null ? !surname.equals(userDto.surname) : userDto.surname != null) return false;
+        if (email != null ? !email.equals(userDto.email) : userDto.email != null) return false;
+        if (password != null ? !password.equals(userDto.password) : userDto.password != null) return false;
+        if (role != null ? !role.equals(userDto.role) : userDto.role != null) return false;
         return ordersDto != null ? ordersDto.equals(userDto.ordersDto) : userDto.ordersDto == null;
 
     }
@@ -122,6 +125,9 @@ public class UserDto extends RepresentationModel<UserDto> {
         result = prime * result + id;
         result = prime * result + (name != null ? name.hashCode() : 0);
         result = prime * result + (surname != null ? surname.hashCode() : 0);
+        result = prime * result + (email != null ? email.hashCode() : 0);
+        result = prime * result + (password != null ? password.hashCode() : 0);
+        result = prime * result + (role != null ? role.hashCode() : 0);
         result = prime * result + (ordersDto != null ? ordersDto.hashCode() : 0);
         return result;
     }
@@ -132,6 +138,8 @@ public class UserDto extends RepresentationModel<UserDto> {
         sb.append("id=").append(id);
         sb.append(", name='").append(name).append('\'');
         sb.append(", surname='").append(surname).append('\'');
+        sb.append(", email='").append(email).append('\'');
+        sb.append(", role='").append(role).append('\'');
         sb.append(", orders=").append(ordersDto);
         sb.append('}');
         return sb.toString();
