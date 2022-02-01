@@ -10,6 +10,14 @@ public class UserCredentialDto {
     private String password;
     private String token;
 
+    public UserCredentialDto() {
+    }
+
+    public UserCredentialDto(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
+
     public UserCredentialDto(String email, String password, String token) {
         this.email = email;
         this.password = password;

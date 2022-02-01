@@ -1,9 +1,13 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.hateoas.HateoasAdder;
+import com.epam.esm.jwt.JwtHandler;
+import com.epam.esm.repository.dto.UserCredentialDto;
 import com.epam.esm.repository.dto.UserDto;
 import com.epam.esm.service.UserService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Min;
@@ -24,10 +28,15 @@ public class UserController {
 
     private final UserService userService;
     private final HateoasAdder<UserDto> userHateoasAdder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtHandler jwtHandler;
 
-    public UserController(UserService userService, HateoasAdder<UserDto> hateoasAdder) {
+
+    public UserController(UserService userService, HateoasAdder<UserDto> hateoasAdder, AuthenticationManager authenticationManager, JwtHandler jwtHandler) {
         this.userService = userService;
         this.userHateoasAdder = hateoasAdder;
+        this.authenticationManager = authenticationManager;
+        this.jwtHandler = jwtHandler;
     }
 
     /**
@@ -60,9 +69,19 @@ public class UserController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto saveUser(@PathVariable UserDto userDto) {
+    public UserDto saveUser(@RequestBody UserDto userDto) {
         UserDto savedUser = userService.saveUser(userDto);
         userHateoasAdder.addLinks(savedUser);
         return savedUser;
+    }
+
+    @PostMapping("/auth")
+    public UserCredentialDto authorizeUser(@RequestBody UserCredentialDto userCredentialDto) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                userCredentialDto.getEmail(), userCredentialDto.getPassword()));
+
+        String token = jwtHandler.generateToken(userCredentialDto.getEmail());
+        userCredentialDto.setToken(token);
+        return userCredentialDto;
     }
 }

@@ -25,9 +25,6 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @PropertySource(value = {"classpath:application.properties"})
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
-    @Value("${jwt.expiration}")
-    private long expirationInMinutes;
-
     @Value("${jwt.secret}")
     private String jwtSecret;
 
@@ -55,9 +52,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
             UsernamePasswordAuthenticationToken authenticationToken =
                     new UsernamePasswordAuthenticationToken(email, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-            filterChain.doFilter(request, response);
-        } else {
-            filterChain.doFilter(request, response);
         }
+        filterChain.doFilter(request, response);
     }
 }
