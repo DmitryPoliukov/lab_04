@@ -1,7 +1,7 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.hateoas.HateoasAdder;
-import com.epam.esm.jwt.JwtHandler;
+import com.epam.esm.jwt.JwtProvider;
 import com.epam.esm.repository.dto.UserCredentialDto;
 import com.epam.esm.repository.dto.UserDto;
 import com.epam.esm.service.UserService;
@@ -29,14 +29,14 @@ public class UserController {
     private final UserService userService;
     private final HateoasAdder<UserDto> userHateoasAdder;
     private final AuthenticationManager authenticationManager;
-    private final JwtHandler jwtHandler;
+    private final JwtProvider jwtProvider;
 
 
-    public UserController(UserService userService, HateoasAdder<UserDto> hateoasAdder, AuthenticationManager authenticationManager, JwtHandler jwtHandler) {
+    public UserController(UserService userService, HateoasAdder<UserDto> hateoasAdder, AuthenticationManager authenticationManager, JwtProvider jwtProvider) {
         this.userService = userService;
         this.userHateoasAdder = hateoasAdder;
         this.authenticationManager = authenticationManager;
-        this.jwtHandler = jwtHandler;
+        this.jwtProvider = jwtProvider;
     }
 
     /**
@@ -80,7 +80,7 @@ public class UserController {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 userCredentialDto.getEmail(), userCredentialDto.getPassword()));
 
-        String token = jwtHandler.generateToken(userCredentialDto.getEmail());
+        String token = jwtProvider.generateToken(userCredentialDto.getEmail());
         userCredentialDto.setToken(token);
         return userCredentialDto;
     }

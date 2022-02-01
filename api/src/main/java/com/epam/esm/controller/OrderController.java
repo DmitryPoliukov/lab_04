@@ -1,11 +1,19 @@
 package com.epam.esm.controller;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.epam.esm.exception.PermissionException;
 import com.epam.esm.hateoas.HateoasAdder;
 import com.epam.esm.repository.dto.CertificateDto;
 import com.epam.esm.repository.dto.OrderDto;
 import com.epam.esm.repository.dto.TagDto;
 import com.epam.esm.repository.dto.UserDto;
 import com.epam.esm.service.OrderService;
+import com.epam.esm.service.UserService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,25 +32,31 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/orders")
+@PropertySource(value = {"classpath:application.properties"})
 public class OrderController {
 
     private final OrderService orderService;
+    private final UserService userService;
     private final HateoasAdder<OrderDto> hateoasAdder;
     private final HateoasAdder<UserDto> userDtoHateoasAdder;
     private final HateoasAdder<CertificateDto> certificateDtoHateoasAdder;
     private final HateoasAdder<TagDto> tagDtoHateoasAdder;
 
     public OrderController(OrderService orderService,
-                           HateoasAdder<OrderDto> hateoasAdder,
+                           UserService userService, HateoasAdder<OrderDto> hateoasAdder,
                            HateoasAdder<UserDto> userDtoHateoasAdder,
                            HateoasAdder<CertificateDto> certificateDtoHateoasAdder,
                            HateoasAdder<TagDto> tagDtoHateoasAdder) {
         this.orderService = orderService;
+        this.userService = userService;
         this.hateoasAdder = hateoasAdder;
         this.userDtoHateoasAdder = userDtoHateoasAdder;
         this.certificateDtoHateoasAdder = certificateDtoHateoasAdder;
         this.tagDtoHateoasAdder = tagDtoHateoasAdder;
     }
+
+    @Value("${jwt.secret}")
+    private String jwtSecret;
 
     /**
      * Method for saving new order.
@@ -52,10 +66,16 @@ public class OrderController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public OrderDto createOrder(@RequestBody @Valid OrderDto order) {
-        OrderDto addedOrder = orderService.create(order);
-        hateoasAdder.addLinks(addedOrder);
-        return addedOrder;
+    public OrderDto createOrder(@RequestHeader("Authorization") String authorizationHeader,
+                                @RequestBody @Valid OrderDto order) {
+        String emailFromAuth = getEmailFromHeader(authorizationHeader);
+        if (emailFromAuth.equals(order.getUserDto().getEmail())) {
+            OrderDto addedOrder = orderService.create(order);
+            hateoasAdder.addLinks(addedOrder);
+            return addedOrder;
+        } else {
+            throw new PermissionException("You don't have permission to do that");
+        }
     }
 
     /**
@@ -65,15 +85,22 @@ public class OrderController {
      * @return Found order entity with hateoas
      */
     @GetMapping("/{id}")
-    public OrderDto readOrder(@PathVariable("id") int id) {
+    public OrderDto readOrder(@RequestHeader("Authorization") String authorizationHeader,
+                              @PathVariable("id") int id) {
         OrderDto order = orderService.readOrder(id);
-        hateoasAdder.addLinks(order);
-        userDtoHateoasAdder.addLinks(order.getUserDto());
-        certificateDtoHateoasAdder.addLinks(order.getCertificateDto());
-        order.getCertificateDto().getTagsDto().stream()
-                .peek(tagDtoHateoasAdder::addLinks)
-                .collect(Collectors.toList());
-        return order;
+        String emailFromAuth = getEmailFromHeader(authorizationHeader);
+        String emailFromOrder = order.getUserDto().getEmail();
+        if (emailFromAuth.equals(emailFromOrder)) {
+            hateoasAdder.addLinks(order);
+            userDtoHateoasAdder.addLinks(order.getUserDto());
+            certificateDtoHateoasAdder.addLinks(order.getCertificateDto());
+            order.getCertificateDto().getTagsDto().stream()
+                    .peek(tagDtoHateoasAdder::addLinks)
+                    .collect(Collectors.toList());
+            return order;
+        } else {
+            throw new PermissionException("You don't have permission to do that");
+        }
     }
 
     /**
@@ -85,17 +112,34 @@ public class OrderController {
      * @return Found list of orders with hateoas
      */
     @GetMapping("/users/{userId}")
-    public List<OrderDto> ordersByUserId(@PathVariable int userId,
+    public List<OrderDto> ordersByUserId(@RequestHeader("Authorization") String authorizationHeader,
+                                         @PathVariable int userId,
                                          @RequestParam(value = "page", defaultValue = "1", required = false) @Min(1) int page,
                                          @RequestParam(value = "size", defaultValue = "5", required = false) @Min(1) int size) {
-        List<OrderDto> orders = orderService.readAllByUserId(userId, page, size);
+        String emailFromPath = userService.read(userId).getEmail();
+        String emailFromAuth = getEmailFromHeader(authorizationHeader);
+        if (emailFromAuth.equals(emailFromPath)) {
+            List<OrderDto> orders = orderService.readAllByUserId(userId, page, size);
 
-        return orders.stream()
-                .peek(orderDto -> userDtoHateoasAdder.addLinks(orderDto.getUserDto()))
-                .peek(orderDto -> certificateDtoHateoasAdder.addLinks(orderDto.getCertificateDto()))
-                .peek(orderDto -> orderDto.getCertificateDto().getTagsDto().stream().peek(tagDtoHateoasAdder::addLinks)
-                                        .collect(Collectors.toList()))
-                .peek(hateoasAdder::addLinks)
-                .collect(Collectors.toList());
+            return orders.stream()
+                    .peek(orderDto -> userDtoHateoasAdder.addLinks(orderDto.getUserDto()))
+                    .peek(orderDto -> certificateDtoHateoasAdder.addLinks(orderDto.getCertificateDto()))
+                    .peek(orderDto -> orderDto.getCertificateDto().getTagsDto().stream().peek(tagDtoHateoasAdder::addLinks)
+                            .collect(Collectors.toList()))
+                    .peek(hateoasAdder::addLinks)
+                    .collect(Collectors.toList());
+        } else {
+            throw new PermissionException("You don't have permission to do that");
+        }
+    }
+
+    private String getEmailFromHeader(String authorizationHeader) {
+
+        final String BEARER = "Bearer ";
+        String token = authorizationHeader.substring(BEARER.length());
+        Algorithm algorithm = Algorithm.HMAC256(jwtSecret.getBytes());
+        JWTVerifier verifier = JWT.require(algorithm).build();
+        DecodedJWT decodedJWT = verifier.verify(token);
+        return decodedJWT.getSubject();
     }
 }

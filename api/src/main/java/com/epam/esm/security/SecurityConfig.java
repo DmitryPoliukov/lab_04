@@ -34,11 +34,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(STATELESS);
-        http.authorizeRequests().antMatchers(GET, "/certificates/**", "/users").permitAll()
+        http.authorizeRequests().antMatchers(GET, "/certificates/**").permitAll()
                 .antMatchers(POST, "/users/register", "/users/auth").permitAll();
 
         http.authorizeRequests().antMatchers(POST, "/orders").fullyAuthenticated()
-                .antMatchers(GET, "/tags/**", "/users/**").fullyAuthenticated();
+                .antMatchers(GET, "/tags/**", "/users/**", "/orders/**").fullyAuthenticated();
         http.authorizeRequests().anyRequest().hasRole(ADMIN);
         http.addFilterBefore(customAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
     }

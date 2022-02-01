@@ -21,6 +21,6 @@ public class OrderHateoasAdder implements HateoasAdder<OrderDto> {
     private static final Class<OrderController> CONTROLLER = OrderController.class;
     @Override
     public void addLinks(OrderDto orderDto) {
-        orderDto.add(linkTo(methodOn(CONTROLLER).createOrder(orderDto)).withRel("new"));
+        orderDto.add(linkTo(methodOn(CONTROLLER).createOrder(null, orderDto)).withRel("new"));
     }
 }

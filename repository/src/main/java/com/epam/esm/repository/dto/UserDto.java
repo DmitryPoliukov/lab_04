@@ -24,6 +24,7 @@ public class UserDto extends RepresentationModel<UserDto> {
 
     private String email;
 
+    @JsonIgnore
     private String password;
 
     private Role role;
