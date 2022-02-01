@@ -58,6 +58,8 @@ public class OrderController {
     @Value("${jwt.secret}")
     private String jwtSecret;
 
+    private static final String PERMISSION_MESSAGE = "You don't have permission to do that";
+
     /**
      * Method for saving new order.
      *
@@ -74,7 +76,7 @@ public class OrderController {
             hateoasAdder.addLinks(addedOrder);
             return addedOrder;
         } else {
-            throw new PermissionException("You don't have permission to do that");
+            throw new PermissionException(PERMISSION_MESSAGE);
         }
     }
 
@@ -94,12 +96,11 @@ public class OrderController {
             hateoasAdder.addLinks(order);
             userDtoHateoasAdder.addLinks(order.getUserDto());
             certificateDtoHateoasAdder.addLinks(order.getCertificateDto());
-            order.getCertificateDto().getTagsDto().stream()
-                    .peek(tagDtoHateoasAdder::addLinks)
-                    .collect(Collectors.toList());
+            order.getCertificateDto().getTagsDto()
+                    .forEach(tagDtoHateoasAdder::addLinks);
             return order;
         } else {
-            throw new PermissionException("You don't have permission to do that");
+            throw new PermissionException(PERMISSION_MESSAGE);
         }
     }
 
@@ -124,12 +125,11 @@ public class OrderController {
             return orders.stream()
                     .peek(orderDto -> userDtoHateoasAdder.addLinks(orderDto.getUserDto()))
                     .peek(orderDto -> certificateDtoHateoasAdder.addLinks(orderDto.getCertificateDto()))
-                    .peek(orderDto -> orderDto.getCertificateDto().getTagsDto().stream().peek(tagDtoHateoasAdder::addLinks)
-                            .collect(Collectors.toList()))
+                    .peek(orderDto -> orderDto.getCertificateDto().getTagsDto().forEach(tagDtoHateoasAdder::addLinks))
                     .peek(hateoasAdder::addLinks)
                     .collect(Collectors.toList());
         } else {
-            throw new PermissionException("You don't have permission to do that");
+            throw new PermissionException(PERMISSION_MESSAGE);
         }
     }
 

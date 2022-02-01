@@ -55,9 +55,9 @@ public class TagController {
     @GetMapping
     public List<TagDto> readTags (@RequestParam(value = "page", defaultValue = "1", required = false) @Min(1) int page,
                                 @RequestParam(value = "size", defaultValue = "5", required = false) @Min(1) int size) {
-        return tagService.readAll(page, size).stream()
-                .peek(tagHateoasAdder::addLinks)
-                .collect(Collectors.toList());
+        List<TagDto> tagDtos = tagService.readAll(page, size);
+        tagDtos.forEach(tagHateoasAdder::addLinks);
+        return tagDtos;
     }
 
     /**

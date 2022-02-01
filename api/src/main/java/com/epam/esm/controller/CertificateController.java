@@ -52,9 +52,8 @@ public class CertificateController {
     public CertificateDto readCertificate(@PathVariable int id) {
         CertificateDto certificate = certificateService.read(id);
         certificateHateoasAdder.addLinks(certificate);
-        certificate.getTagsDto().stream()
-                .peek(tagDtoHateoasAdder::addLinks)
-                .collect(Collectors.toList());
+        certificate.getTagsDto()
+                .forEach(tagDtoHateoasAdder::addLinks);
         return certificate;
     }
 
@@ -69,8 +68,7 @@ public class CertificateController {
     public List<CertificateDto> readCertificates(@RequestParam(value = "page", defaultValue = "1", required = false) @Min(1) int page,
                                                  @RequestParam(value = "size", defaultValue = "5", required = false) @Min(1) int size) {
         return certificateService.readAll(page,size).stream()
-                .peek(certificateDto -> certificateDto.getTagsDto().stream().peek(tagDtoHateoasAdder::addLinks)
-                        .collect(Collectors.toList()))
+                .peek(certificateDto -> certificateDto.getTagsDto().forEach(tagDtoHateoasAdder::addLinks))
                 .peek(certificateHateoasAdder::addLinks)
                 .collect(Collectors.toList());
     }
@@ -91,8 +89,7 @@ public class CertificateController {
                                                           @RequestParam(value = "size", defaultValue = "5", required = false) @Min(1) int size) {
 
         return certificateService.readCertificateWithParams(tagName, descriptionOrNamePart, sortParameter, ascending, page, size).stream()
-                .peek(certificateDto -> certificateDto.getTagsDto().stream().peek(tagDtoHateoasAdder::addLinks)
-                        .collect(Collectors.toList()))
+                .peek(certificateDto -> certificateDto.getTagsDto().forEach(tagDtoHateoasAdder::addLinks))
                 .peek(certificateHateoasAdder::addLinks)
                 .collect(Collectors.toList());
 
@@ -111,9 +108,8 @@ public class CertificateController {
 
         CertificateDto createdCertificate = certificateService.create(certificateDto);
         certificateHateoasAdder.addLinks(createdCertificate);
-        certificateDto.getTagsDto().stream()
-                .peek(tagDtoHateoasAdder::addLinks)
-                .collect(Collectors.toList());
+        certificateDto.getTagsDto()
+                .forEach(tagDtoHateoasAdder::addLinks);
         return createdCertificate;
     }
 
@@ -160,8 +156,7 @@ public class CertificateController {
                                             @RequestParam(value = "size", defaultValue = "5", required = false) @Min(1) int size) {
     List<String> tags = Arrays.asList(tag.get());
         return certificateService.readBySomeTags(tags, page, size).stream()
-                .peek(certificateDto -> certificateDto.getTagsDto().stream().peek(tagDtoHateoasAdder::addLinks)
-                        .collect(Collectors.toList()))
+                .peek(certificateDto -> certificateDto.getTagsDto().forEach(tagDtoHateoasAdder::addLinks))
                 .peek(certificateHateoasAdder::addLinks)
                 .collect(Collectors.toList());
     }
