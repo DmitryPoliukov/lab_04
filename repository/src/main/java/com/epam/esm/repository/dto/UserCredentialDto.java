@@ -2,13 +2,16 @@ package com.epam.esm.repository.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.validation.constraints.Email;
+
 public class UserCredentialDto {
 
+    @Email
     private String email;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
-    private String token;
+    private String accessToken;
 
     public UserCredentialDto() {
     }
@@ -18,10 +21,10 @@ public class UserCredentialDto {
         this.password = password;
     }
 
-    public UserCredentialDto(String email, String password, String token) {
+    public UserCredentialDto(String email, String password, String accessToken) {
         this.email = email;
         this.password = password;
-        this.token = token;
+        this.accessToken = accessToken;
     }
 
     public String getEmail() {
@@ -40,12 +43,12 @@ public class UserCredentialDto {
         this.password = password;
     }
 
-    public String getToken() {
-        return token;
+    public String getAccessToken() {
+        return accessToken;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 
     @Override
@@ -56,8 +59,7 @@ public class UserCredentialDto {
         UserCredentialDto userCredential = (UserCredentialDto) o;
 
         if (email != null ? !email.equals(userCredential.email) : userCredential.email != null) return false;
-        if (password != null ? !password.equals(userCredential.password) : userCredential.password != null) return false;
-        return token != null ? token.equals(userCredential.token) : userCredential.token == null;
+        return password != null ? password.equals(userCredential.password) : userCredential.password == null;
 
     }
 
@@ -67,7 +69,6 @@ public class UserCredentialDto {
         int prime = 31;
         result = prime * result + (email != null ? email.hashCode() : 0);
         result = prime * result + (password != null ? password.hashCode() : 0);
-        result = prime * result + (token != null ? token.hashCode() : 0);
         return result;
     }
 

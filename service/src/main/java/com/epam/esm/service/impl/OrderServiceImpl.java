@@ -48,6 +48,7 @@ public class OrderServiceImpl implements OrderService {
             ResourceException.notFoundWithCertificateId(orderDto.getCertificateDto().getId());
         }
         orderDto.setCreateDate(LocalDateTime.now());
+        orderDto.setUserDto(optionalUser.get().toDto());
         Order order = orderDto.toEntity();
         return orderDao.create(order).toDto();
     }

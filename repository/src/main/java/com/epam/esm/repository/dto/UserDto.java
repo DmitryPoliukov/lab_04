@@ -3,11 +3,10 @@ package com.epam.esm.repository.dto;
 import com.epam.esm.repository.entity.Role;
 import com.epam.esm.repository.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.hateoas.RepresentationModel;
 
-import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,9 +21,10 @@ public class UserDto extends RepresentationModel<UserDto> {
     @Size(min = 1,max = 45, message = "User surname length should be from 1 to 45")
     private String surname;
 
+    @Email
     private String email;
 
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     private Role role;

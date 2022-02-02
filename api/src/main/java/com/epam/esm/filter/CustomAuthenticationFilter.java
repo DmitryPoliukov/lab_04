@@ -26,7 +26,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private static final long EXPIRATION_IN_MINUTES_ACCESS = 1;
+    private static final long EXPIRATION_IN_MINUTES_ACCESS = 60;
 
     private static final long EXPIRATION_IN_MINUTES_REFRESH = 300;
 
