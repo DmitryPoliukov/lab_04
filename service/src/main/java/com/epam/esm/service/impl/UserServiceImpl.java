@@ -6,6 +6,7 @@ import com.epam.esm.repository.entity.Role;
 import com.epam.esm.repository.entity.User;
 import com.epam.esm.service.UserService;
 import com.epam.esm.service.exception.IncorrectParameterException;
+import com.epam.esm.service.exception.NoSuchEntityException;
 import com.epam.esm.service.exception.ResourceException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -55,5 +56,19 @@ public class UserServiceImpl implements UserService {
         userDto.setPassword(bCryptPasswordEncode.encode(userDto.getPassword()));
         userDto.setRole(Role.USER);
         return userDao.saveUser(userDto.toEntity()).toDto();
+    }
+
+    @Override
+    public UserDto findByEmail(String email) {
+        if (email == null) {
+            throw new IncorrectParameterException("Null parameter in load user by username");
+        }
+
+        Optional<User> user = userDao.findByEmail(email);
+        if (user.isPresent()) {
+            return user.get().toDto();
+        } else {
+            throw new NoSuchEntityException("No user with such email");
+        }
     }
 }

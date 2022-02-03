@@ -12,8 +12,6 @@ import com.epam.esm.repository.dto.TagDto;
 import com.epam.esm.repository.dto.UserDto;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +30,6 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/orders")
-@PropertySource(value = {"classpath:application.properties"})
 public class OrderController {
 
     private final OrderService orderService;
@@ -55,8 +52,8 @@ public class OrderController {
         this.tagDtoHateoasAdder = tagDtoHateoasAdder;
     }
 
-    @Value("${jwt.secret}")
-    private String jwtSecret;
+
+    private static final String JWT_SECRET = "secret";
 
     private static final String PERMISSION_MESSAGE = "You don't have permission to do that";
 
@@ -137,7 +134,7 @@ public class OrderController {
 
         final String BEARER = "Bearer ";
         String token = authorizationHeader.substring(BEARER.length());
-        Algorithm algorithm = Algorithm.HMAC256(jwtSecret.getBytes());
+        Algorithm algorithm = Algorithm.HMAC256(JWT_SECRET.getBytes());
         JWTVerifier verifier = JWT.require(algorithm).build();
         DecodedJWT decodedJWT = verifier.verify(token);
         return decodedJWT.getSubject();
