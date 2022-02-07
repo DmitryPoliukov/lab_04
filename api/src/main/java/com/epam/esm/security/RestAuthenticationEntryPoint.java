@@ -13,6 +13,7 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authenticationException) throws IOException {
+        response.setHeader("WWW-Authenticate", "Bearer error: " + authenticationException.getMessage());
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.getOutputStream().println("{ \"error\": \"" + authenticationException.getMessage() + "\" }");
