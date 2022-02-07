@@ -5,6 +5,7 @@ import com.epam.esm.repository.dao.TagDao;
 import com.epam.esm.repository.entity.Tag;
 import com.epam.esm.repository.exception.NullParameterException;
 import com.epam.esm.repository.exception.TagException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,7 @@ public class TagDaoImpl implements TagDao {
     private final EntityManager entityManager;
     private final PaginationHandler paginationHandler;
 
+    @Autowired
     public TagDaoImpl(EntityManager entityManager, PaginationHandler paginationHandler) {
         this.entityManager = entityManager;
         this.paginationHandler = paginationHandler;

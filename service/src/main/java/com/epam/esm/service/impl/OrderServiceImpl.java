@@ -10,6 +10,7 @@ import com.epam.esm.repository.entity.User;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.exception.IncorrectParameterException;
 import com.epam.esm.service.exception.ResourceException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderDao orderDao;
     private final CertificateDao certificateDao;
 
+    @Autowired
     public OrderServiceImpl(
             UserDao userDao, OrderDao orderDao, CertificateDao certificateDao) {
         this.userDao = userDao;

@@ -1,12 +1,12 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.repository.dao.CertificateDao;
-import com.epam.esm.repository.dao.TagDao;
 import com.epam.esm.repository.dto.CertificateDto;
 import com.epam.esm.repository.entity.Certificate;
 import com.epam.esm.service.CertificateService;
 import com.epam.esm.service.exception.IncorrectParameterException;
 import com.epam.esm.service.exception.ResourceException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,11 +23,10 @@ public class CertificateServiceImpl implements CertificateService {
 
     public static final int ONE_UPDATED_ROW = 1;
     private final CertificateDao certificateDao;
-    private final TagDao tagDao;
 
-    public CertificateServiceImpl(CertificateDao certificateDao, TagDao tagDao) {
+    @Autowired
+    public CertificateServiceImpl(CertificateDao certificateDao) {
         this.certificateDao = certificateDao;
-        this.tagDao = tagDao;
     }
 
     @Override

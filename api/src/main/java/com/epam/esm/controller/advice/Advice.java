@@ -1,6 +1,7 @@
 package com.epam.esm.controller.advice;
 
 
+import com.epam.esm.exception.PermissionException;
 import com.epam.esm.repository.entity.ErrorResponse;
 import com.epam.esm.service.exception.IncorrectParameterException;
 import com.epam.esm.service.exception.ResourceNotFoundException;
@@ -133,4 +134,13 @@ public class Advice extends ResponseEntityExceptionHandler {
                 new ErrorResponse(ex.getMessage(), errorCode);
         return new ResponseEntity<>(errorResponse, BAD_REQUEST);
     }
+
+    @ExceptionHandler(value = {PermissionException.class})
+    public ResponseEntity<ErrorResponse> handlePermissionException(PermissionException e) {
+        String errorCode = String.format("%s%s", FORBIDDEN.value(), 0);
+        ErrorResponse errorResponse =
+                new ErrorResponse(e.getMessage(), errorCode);
+        return new ResponseEntity<>(errorResponse, FORBIDDEN);
+    }
+
 }

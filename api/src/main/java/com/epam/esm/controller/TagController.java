@@ -3,6 +3,7 @@ package com.epam.esm.controller;
 import com.epam.esm.hateoas.HateoasAdder;
 import com.epam.esm.repository.dto.TagDto;
 import com.epam.esm.service.TagService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Class {@code TagController} is an endpoint of the API which allows to perform CRD operations on tags.
@@ -27,6 +27,7 @@ public class TagController {
     private final TagService tagService;
     private final HateoasAdder<TagDto> tagHateoasAdder;
 
+    @Autowired
     public TagController(TagService tagService, HateoasAdder<TagDto> tagHateoasAdder) {
         this.tagService = tagService;
         this.tagHateoasAdder = tagHateoasAdder;

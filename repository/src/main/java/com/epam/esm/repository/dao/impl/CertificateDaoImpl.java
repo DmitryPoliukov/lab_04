@@ -5,6 +5,7 @@ import com.epam.esm.repository.dao.PaginationHandler;
 import com.epam.esm.repository.entity.Certificate;
 import com.epam.esm.repository.entity.Tag;
 import com.epam.esm.repository.exception.NullParameterException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +25,7 @@ public class CertificateDaoImpl implements CertificateDao {
     private final PaginationHandler paginationHandler;
     private final EntityManager entityManager;
 
+    @Autowired
     public CertificateDaoImpl( PaginationHandler paginationHandler, EntityManager entityManager) {
         this.entityManager = entityManager;
         this.paginationHandler = paginationHandler;

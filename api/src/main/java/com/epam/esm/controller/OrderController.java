@@ -12,6 +12,7 @@ import com.epam.esm.repository.dto.TagDto;
 import com.epam.esm.repository.dto.UserDto;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,6 +40,7 @@ public class OrderController {
     private final HateoasAdder<CertificateDto> certificateDtoHateoasAdder;
     private final HateoasAdder<TagDto> tagDtoHateoasAdder;
 
+    @Autowired
     public OrderController(OrderService orderService,
                            UserService userService, HateoasAdder<OrderDto> hateoasAdder,
                            HateoasAdder<UserDto> userDtoHateoasAdder,
@@ -67,8 +69,7 @@ public class OrderController {
     @ResponseStatus(HttpStatus.CREATED)
     public OrderDto createOrder(@RequestHeader("Authorization") String authorizationHeader,
                                 @RequestBody @Valid OrderDto order) {
-        String emailFromAuth = getEmailFromHeader(authorizationHeader);
-        if (emailFromAuth.equals(order.getUserDto().getEmail())) {
+        if (isEmailsEquals(authorizationHeader, order)) {
             OrderDto addedOrder = orderService.create(order);
             hateoasAdder.addLinks(addedOrder);
             return addedOrder;
@@ -87,9 +88,7 @@ public class OrderController {
     public OrderDto readOrder(@RequestHeader("Authorization") String authorizationHeader,
                               @PathVariable("id") int id) {
         OrderDto order = orderService.readOrder(id);
-        String emailFromAuth = getEmailFromHeader(authorizationHeader);
-        String emailFromOrder = order.getUserDto().getEmail();
-        if (emailFromAuth.equals(emailFromOrder)) {
+        if (isEmailsEquals(authorizationHeader, order)) {
             hateoasAdder.addLinks(order);
             userDtoHateoasAdder.addLinks(order.getUserDto());
             certificateDtoHateoasAdder.addLinks(order.getCertificateDto());
@@ -130,8 +129,12 @@ public class OrderController {
         }
     }
 
-    private String getEmailFromHeader(String authorizationHeader) {
+    private boolean isEmailsEquals(String authorizationHeader, OrderDto orderDto) {
+        String emailFromToken = getEmailFromHeader(authorizationHeader);
+        return emailFromToken.equals(orderDto.getUserDto().getEmail());
+    }
 
+    private String getEmailFromHeader(String authorizationHeader) {
         final String BEARER = "Bearer ";
         String token = authorizationHeader.substring(BEARER.length());
         Algorithm algorithm = Algorithm.HMAC256(JWT_SECRET.getBytes());

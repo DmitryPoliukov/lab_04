@@ -6,6 +6,7 @@ import com.epam.esm.repository.entity.Order;
 import com.epam.esm.repository.exception.NullParameterException;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,7 @@ public class OrderDaoImpl implements OrderDao {
     private final EntityManager entityManager;
     private final PaginationHandler paginationHandler;
 
+    @Autowired
     public OrderDaoImpl(EntityManager entityManager, PaginationHandler paginationHandler) {
         this.entityManager = entityManager;
         this.paginationHandler = paginationHandler;

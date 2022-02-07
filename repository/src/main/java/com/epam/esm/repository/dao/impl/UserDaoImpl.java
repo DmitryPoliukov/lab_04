@@ -2,12 +2,11 @@ package com.epam.esm.repository.dao.impl;
 
 import com.epam.esm.repository.dao.PaginationHandler;
 import com.epam.esm.repository.dao.UserDao;
-import com.epam.esm.repository.entity.Certificate;
-import com.epam.esm.repository.entity.Order;
 import com.epam.esm.repository.entity.User;
 import com.epam.esm.repository.exception.NullParameterException;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,12 +25,11 @@ public class UserDaoImpl implements UserDao {
     private final PaginationHandler paginationHandler;
     private final EntityManager entityManager;
 
+    @Autowired
     public UserDaoImpl(PaginationHandler paginationHandler, EntityManager entityManager) {
         this.paginationHandler = paginationHandler;
         this.entityManager = entityManager;
     }
-    private static final String FIND_BY_EMAIL = "Select u FROM users as u WHERE u.email = :email";
-
 
     @Override
     public Optional<User> read(int id) {

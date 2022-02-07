@@ -8,6 +8,7 @@ import com.epam.esm.hateoas.HateoasAdder;
 import com.epam.esm.repository.dto.UserDto;
 import com.epam.esm.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,6 +40,7 @@ public class UserController {
     private final UserService userService;
     private final HateoasAdder<UserDto> userHateoasAdder;
 
+    @Autowired
     public UserController(UserService userService, HateoasAdder<UserDto> userHateoasAdder) {
         this.userService = userService;
         this.userHateoasAdder = userHateoasAdder;
@@ -46,7 +48,7 @@ public class UserController {
 
     private static final String JWT_SECRET = "secret";
     private static final String BEARER = "Bearer ";
-    private static final long EXPIRATION_IN_MINUTES_ACCESS = 1;
+    private static final long EXPIRATION_IN_MINUTES_ACCESS = 100;
 
     /**
      * Method for getting user by ID.
@@ -100,7 +102,7 @@ public class UserController {
                         .withSubject(email)
                         .withExpiresAt(Date.from(LocalDateTime.now().plusMinutes(EXPIRATION_IN_MINUTES_ACCESS)
                                 .atZone(ZoneId.systemDefault()).toInstant()))
-                        .withClaim("role", Collections.singletonList(user.getRole().toString()))
+                        .withClaim("roles", Collections.singletonList(user.getRole().toString()))
                         .sign(algorithm);
                 Map<String, String> tokens = new HashMap<>();
                 tokens.put("accessToken", accessToken);

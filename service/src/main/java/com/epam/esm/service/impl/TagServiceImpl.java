@@ -8,6 +8,7 @@ import com.epam.esm.repository.entity.Tag;
 import com.epam.esm.service.TagService;
 import com.epam.esm.service.exception.IncorrectParameterException;
 import com.epam.esm.service.exception.ResourceException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,7 @@ public class TagServiceImpl implements TagService {
     private final TagDao tagDao;
     private final CertificateDao certificateDao;
 
+    @Autowired
     public TagServiceImpl(TagDao tagDao, CertificateDao certificateDao) {
         this.tagDao = tagDao;
         this.certificateDao = certificateDao;

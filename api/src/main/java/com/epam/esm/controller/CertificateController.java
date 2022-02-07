@@ -3,8 +3,8 @@ package com.epam.esm.controller;
 import com.epam.esm.hateoas.HateoasAdder;
 import com.epam.esm.repository.dto.CertificateDto;
 import com.epam.esm.repository.dto.TagDto;
-import com.epam.esm.repository.entity.Certificate;
 import com.epam.esm.service.CertificateService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +34,7 @@ public class CertificateController {
     private final HateoasAdder<CertificateDto> certificateHateoasAdder;
     private final HateoasAdder<TagDto> tagDtoHateoasAdder;
 
+    @Autowired
     public CertificateController(CertificateService certificateService,
                                  HateoasAdder<CertificateDto> certificateHateoasAdder,
                                  HateoasAdder<TagDto> tagDtoHateoasAdder) {

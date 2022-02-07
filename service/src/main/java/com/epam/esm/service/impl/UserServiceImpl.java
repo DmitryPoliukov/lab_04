@@ -8,6 +8,7 @@ import com.epam.esm.service.UserService;
 import com.epam.esm.service.exception.IncorrectParameterException;
 import com.epam.esm.service.exception.NoSuchEntityException;
 import com.epam.esm.service.exception.ResourceException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,7 @@ public class UserServiceImpl implements UserService {
     private final UserDao userDao;
     private final BCryptPasswordEncoder bCryptPasswordEncode;
 
+    @Autowired
     public UserServiceImpl(UserDao userDao, BCryptPasswordEncoder bCryptPasswordEncode) {
         this.userDao = userDao;
         this.bCryptPasswordEncode = bCryptPasswordEncode;

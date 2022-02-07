@@ -4,14 +4,15 @@ import com.epam.esm.repository.dao.UserDao;
 import com.epam.esm.repository.entity.User;
 import com.epam.esm.service.exception.IncorrectParameterException;
 import com.epam.esm.service.exception.NoSuchEntityException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
 
 @Service
@@ -21,6 +22,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     private static final String ROLE_PREFIX = "ROLE_";
 
+    @Autowired
     public UserDetailsServiceImpl(UserDao userDao) {
         this.userDao = userDao;
     }
@@ -36,7 +38,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new NoSuchEntityException("No user with such email");
         }
 
-        Collection<SimpleGrantedAuthority> authorities = Arrays.asList(new SimpleGrantedAuthority(ROLE_PREFIX
+        Collection<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(ROLE_PREFIX
                 + user.get().getRole().toString()));
 
         return new org.springframework.security.core.userdetails.User(user.get().getEmail(),
