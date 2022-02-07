@@ -76,9 +76,14 @@ public class UserController {
         List<UserDto> userDtos = userService.readAll(page, size);
         userDtos.forEach(userHateoasAdder::addLinks);
         return userDtos;
-
     }
 
+    /**
+     * Method for saving user to database.
+     *
+     * @param userDto user entity foor saving
+     * @return created user with HATEOAS
+     */
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto saveUser(@Valid @RequestBody UserDto userDto) {
@@ -87,6 +92,14 @@ public class UserController {
         return savedUser;
     }
 
+
+    /**
+     * Method for refreshing access token.
+     *
+     * @param request HttpServletRequest including refresh token.
+     * @param response HttpServletResponse.
+     * @throws IOException
+     */
     @GetMapping("/token/refresh")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
