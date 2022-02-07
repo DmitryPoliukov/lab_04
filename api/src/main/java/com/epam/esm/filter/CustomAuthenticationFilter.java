@@ -3,6 +3,7 @@ package com.epam.esm.filter;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.epam.esm.exception.PermissionException;
+import com.epam.esm.repository.dto.UserCredentialDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,6 +17,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.StringReader;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -27,7 +29,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private static final long EXPIRATION_IN_MINUTES_ACCESS = 100;
+    private static final long EXPIRATION_IN_MINUTES_ACCESS = 1;
     private static final long EXPIRATION_IN_MINUTES_REFRESH = 100;
     private static final String JWT_SECRET = "secret";
 
@@ -40,18 +42,17 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request,
                                                 HttpServletResponse response) throws AuthenticationException {
-        String username;
-        String password;
+        UserCredentialDto userCredentialDto;
         try {
-            String test = request.getReader().lines().collect(Collectors.joining());
-            String[] array = test.split("\"");
-            username = array[3];
-            password = array[7];
+            String jsonString = request.getReader().lines().collect(Collectors.joining());
+            StringReader reader = new StringReader(jsonString);
+            ObjectMapper mapper = new ObjectMapper();
+            userCredentialDto = mapper.readValue(reader, UserCredentialDto.class);
         } catch (IOException e) {
             throw  new PermissionException("Incorrect input data");
         }
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(username, password);
+                new UsernamePasswordAuthenticationToken(userCredentialDto.getEmail(), userCredentialDto.getPassword());
         return authenticationManager.authenticate(authenticationToken);
     }
 
