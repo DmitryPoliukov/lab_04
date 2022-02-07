@@ -3,6 +3,7 @@ package com.epam.esm.controller;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.epam.esm.hateoas.HateoasAdder;
 import com.epam.esm.repository.dto.UserDto;
@@ -23,6 +24,7 @@ import java.util.*;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
@@ -37,6 +39,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequestMapping("/users")
 public class UserController {
 
+    private static final String ERROR_MESSAGE = "error_message";
     private final UserService userService;
     private final HateoasAdder<UserDto> userHateoasAdder;
 
@@ -122,16 +125,29 @@ public class UserController {
                 tokens.put("refreshToken", refreshToken);
                 response.setContentType(APPLICATION_JSON_VALUE);
                 new ObjectMapper().writeValue(response.getOutputStream(), tokens);
+            } catch (TokenExpiredException e) {
+                response.setHeader("WWW-Authenticate", "Bearer error=\"invalid_token\", " +
+                        "error_description=\"The refresh token expired\"");
+                response.setStatus(UNAUTHORIZED.value());
+                Map<String, String> error = new HashMap<>();
+                error.put(ERROR_MESSAGE, e.getMessage());
+                response.setContentType(APPLICATION_JSON_VALUE);
+                new ObjectMapper().writeValue(response.getOutputStream(), error);
             } catch (Exception e) {
                 response.setHeader("error", e.getMessage());
-                response.setStatus(FORBIDDEN.value());
+                response.setStatus(UNAUTHORIZED.value());
                 Map<String, String> error = new HashMap<>();
-                error.put("error_message", e.getMessage());
+                error.put(ERROR_MESSAGE, e.getMessage());
                 response.setContentType(APPLICATION_JSON_VALUE);
                 new ObjectMapper().writeValue(response.getOutputStream(), error);
             }
         } else {
-            throw new RuntimeException("Refresh token is missing");
+            response.setHeader("WWW-Authenticate", "Authorization");
+            response.setStatus(UNAUTHORIZED.value());
+            Map<String, String> error = new HashMap<>();
+            error.put(ERROR_MESSAGE, "You must be logged in");
+            response.setContentType(APPLICATION_JSON_VALUE);
+            new ObjectMapper().writeValue(response.getOutputStream(), error);
         }
 
     }
