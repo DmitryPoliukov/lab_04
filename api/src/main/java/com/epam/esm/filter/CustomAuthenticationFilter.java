@@ -4,7 +4,6 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.epam.esm.exception.PermissionException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -28,8 +27,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private static final long EXPIRATION_IN_MINUTES_ACCESS = 1;
-    private static final long EXPIRATION_IN_MINUTES_REFRESH = 300;
+    private static final long EXPIRATION_IN_MINUTES_ACCESS = 100;
+    private static final long EXPIRATION_IN_MINUTES_REFRESH = 100;
     private static final String JWT_SECRET = "secret";
 
     private final AuthenticationManager authenticationManager;

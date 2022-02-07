@@ -72,12 +72,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                     new ObjectMapper().writeValue(response.getOutputStream(), error);
                 }
             } else {
-                response.setHeader("WWW-Authenticate", "Authorization");
-                response.setStatus(UNAUTHORIZED.value());
-                Map<String, String> error = new HashMap<>();
-                error.put(ERROR_MESSAGE, "You must be logged in");
-                response.setContentType(APPLICATION_JSON_VALUE);
-                new ObjectMapper().writeValue(response.getOutputStream(), error);
+                filterChain.doFilter(request, response);
             }
         }
     }

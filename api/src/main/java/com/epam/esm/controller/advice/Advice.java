@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.nio.file.AccessDeniedException;
+
 import static org.springframework.http.HttpStatus.*;
 /**
  * Class {@code Advice} provide centralized exception handling across all
@@ -142,5 +144,15 @@ public class Advice extends ResponseEntityExceptionHandler {
                 new ErrorResponse(e.getMessage(), errorCode);
         return new ResponseEntity<>(errorResponse, FORBIDDEN);
     }
+
+    @ExceptionHandler (value = {AccessDeniedException.class})
+    public ResponseEntity<ErrorResponse> handlePermissionException(AccessDeniedException e) {
+        String errorCode = String.format("%s%s", FORBIDDEN.value(), 0);
+        ErrorResponse errorResponse =
+                new ErrorResponse(e.getMessage(), errorCode);
+        return new ResponseEntity<>(errorResponse, FORBIDDEN);
+    }
+
+
 
 }

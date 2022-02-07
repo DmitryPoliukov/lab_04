@@ -23,7 +23,6 @@ import java.time.ZoneId;
 import java.util.*;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -145,7 +144,7 @@ public class UserController {
             response.setHeader("WWW-Authenticate", "Authorization");
             response.setStatus(UNAUTHORIZED.value());
             Map<String, String> error = new HashMap<>();
-            error.put(ERROR_MESSAGE, "You must be logged in");
+            error.put(ERROR_MESSAGE, "Full authentication is required to access this resource");
             response.setContentType(APPLICATION_JSON_VALUE);
             new ObjectMapper().writeValue(response.getOutputStream(), error);
         }
