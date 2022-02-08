@@ -38,7 +38,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequestMapping("/users")
 public class UserController {
 
-    private static final String ERROR_MESSAGE = "error_message";
     private final UserService userService;
     private final HateoasAdder<UserDto> userHateoasAdder;
 
@@ -47,7 +46,7 @@ public class UserController {
         this.userService = userService;
         this.userHateoasAdder = userHateoasAdder;
     }
-
+    private static final String ERROR_MESSAGE = "error_message";
     private static final String JWT_SECRET = "secret";
     private static final String BEARER = "Bearer ";
     private static final long EXPIRATION_IN_MINUTES_ACCESS = 100;

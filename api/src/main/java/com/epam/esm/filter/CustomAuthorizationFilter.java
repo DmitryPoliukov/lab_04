@@ -37,39 +37,43 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        if (authorizationHeader != null && authorizationHeader.startsWith(BEARER)) {
-            try {
-                String token = authorizationHeader.substring(BEARER.length());
-                Algorithm algorithm = Algorithm.HMAC256(JWT_SECRET.getBytes());
-                JWTVerifier verifier = JWT.require(algorithm).build();
-                DecodedJWT decodedJWT = verifier.verify(token);
-                String email = decodedJWT.getSubject();
-                String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
-                Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-                stream(roles).forEach(role -> authorities.add(new SimpleGrantedAuthority(role)));
-                UsernamePasswordAuthenticationToken authenticationToken =
-                        new UsernamePasswordAuthenticationToken(email, null, authorities);
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-                filterChain.doFilter(request, response);
-            } catch (TokenExpiredException e) {
-                response.setHeader("WWW-Authenticate", "Bearer error=\"invalid_token\", " +
-                        "error_description=\"The access token expired\"");
-                response.setStatus(UNAUTHORIZED.value());
-                Map<String, String> error = new HashMap<>();
-                error.put(ERROR_MESSAGE, e.getMessage());
-                response.setContentType(APPLICATION_JSON_VALUE);
-                new ObjectMapper().writeValue(response.getOutputStream(), error);
-            } catch (Exception e) {
-                response.setHeader("error", e.getMessage());
-                response.setStatus(FORBIDDEN.value());
-                Map<String, String> error = new HashMap<>();
-                error.put(ERROR_MESSAGE, e.getMessage());
-                response.setContentType(APPLICATION_JSON_VALUE);
-                new ObjectMapper().writeValue(response.getOutputStream(), error);
-            }
-        } else {
+        if (request.getServletPath().equals("/users/token/refresh")) {
             filterChain.doFilter(request, response);
+        } else {
+            String authorizationHeader = request.getHeader(AUTHORIZATION);
+            if (authorizationHeader != null && authorizationHeader.startsWith(BEARER)) {
+                try {
+                    String token = authorizationHeader.substring(BEARER.length());
+                    Algorithm algorithm = Algorithm.HMAC256(JWT_SECRET.getBytes());
+                    JWTVerifier verifier = JWT.require(algorithm).build();
+                    DecodedJWT decodedJWT = verifier.verify(token);
+                    String email = decodedJWT.getSubject();
+                    String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
+                    Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+                    stream(roles).forEach(role -> authorities.add(new SimpleGrantedAuthority(role)));
+                    UsernamePasswordAuthenticationToken authenticationToken =
+                            new UsernamePasswordAuthenticationToken(email, null, authorities);
+                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                    filterChain.doFilter(request, response);
+                } catch (TokenExpiredException e) {
+                    response.setHeader("WWW-Authenticate", "Bearer error=\"invalid_token\", " +
+                            "error_description=\"The access token expired\"");
+                    response.setStatus(UNAUTHORIZED.value());
+                    Map<String, String> error = new HashMap<>();
+                    error.put(ERROR_MESSAGE, e.getMessage());
+                    response.setContentType(APPLICATION_JSON_VALUE);
+                    new ObjectMapper().writeValue(response.getOutputStream(), error);
+                } catch (Exception e) {
+                    response.setHeader("error", e.getMessage());
+                    response.setStatus(FORBIDDEN.value());
+                    Map<String, String> error = new HashMap<>();
+                    error.put(ERROR_MESSAGE, e.getMessage());
+                    response.setContentType(APPLICATION_JSON_VALUE);
+                    new ObjectMapper().writeValue(response.getOutputStream(), error);
+                }
+            } else {
+                filterChain.doFilter(request, response);
+            }
         }
     }
 }
