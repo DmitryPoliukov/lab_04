@@ -101,7 +101,7 @@ class CertificateServiceImplTest {
     void readBySomeTags() {
         List<Certificate> giftCertificates = Arrays.asList(CERTIFICATE_1, CERTIFICATE_3);
         List<String> tagNamesList = Arrays.asList(TAG_1.getName(), TAG_2.getName());
-        when(certificateDao.readBySomeTags(tagNamesList, PAGE, SIZE)).thenReturn(giftCertificates);
+        when(certificateDao.readCertificatesByTagNames(tagNamesList, PAGE, SIZE)).thenReturn(giftCertificates);
 
         List<Certificate> actual = certificateService.readBySomeTags(tagNamesList, PAGE, SIZE)
                 .stream().map(CertificateDto::toEntity).collect(Collectors.toList());
