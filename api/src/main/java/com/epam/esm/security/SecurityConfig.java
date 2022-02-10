@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
@@ -23,6 +24,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String ADMIN = "ADMIN";
+    private static final String USER = "USER";
     private final CustomAuthorizationFilter customAuthorizationFilter;
     private final UserDetailsServiceImpl userDetailsService;
 
@@ -49,9 +51,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(STATELESS);
         http.authorizeRequests().antMatchers(GET, "/certificates/**", "/users/token/refresh").permitAll()
                 .antMatchers(POST, "/users/register", "/users/auth", "/login").permitAll();
-
-        http.authorizeRequests().antMatchers(POST, "/orders").fullyAuthenticated()
-                .antMatchers(GET, "/tags/**", "/users/**", "/orders/**").fullyAuthenticated();
+        http.authorizeRequests().antMatchers(POST, "/orders").hasRole(USER)
+                .antMatchers(GET, "/tags/**", "/users/**", "/orders/**").hasRole(USER);
         http.authorizeRequests().anyRequest().hasRole(ADMIN);
         http.addFilter(new CustomAuthenticationFilter(authenticationManagerBean()));
         http.addFilterBefore(customAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);

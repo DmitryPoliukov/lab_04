@@ -46,6 +46,7 @@ public class UserController {
         this.userService = userService;
         this.userHateoasAdder = userHateoasAdder;
     }
+
     private static final String ERROR_MESSAGE = "error_message";
     private static final String JWT_SECRET = "secret";
     private static final String BEARER = "Bearer ";
@@ -116,7 +117,7 @@ public class UserController {
                         .withSubject(email)
                         .withExpiresAt(Date.from(LocalDateTime.now().plusMinutes(EXPIRATION_IN_MINUTES_ACCESS)
                                 .atZone(ZoneId.systemDefault()).toInstant()))
-                        .withClaim("roles", Collections.singletonList(user.getRole().toString()))
+                        .withClaim("roles", Collections.singletonList("ROLE_" + user.getRole().toString()))
                         .sign(algorithm);
                 Map<String, String> tokens = new HashMap<>();
                 tokens.put("accessToken", accessToken);
