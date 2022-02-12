@@ -9,12 +9,12 @@
           * search by part of name/description (can be implemented, using DB function call)
           * sort by date or by name ASC/DESC (extra task: implement ability to apply both sort type at the same time).
 3. Convenient error/exception handling mechanism should be implemented: all errors should be meaningful and localized on backend side. Example: handle 404 error:
- • HTTP Status: 404
- • response body    
- • {
- • “errorMessage”: “Requested resource not found (id = 55)”,
- • “errorCode”: 40401
- • }
+ * HTTP Status: 404
+ * response body    
+ * {
+ * “errorMessage”: “Requested resource not found (id = 55)”,
+ * “errorCode”: 40401
+ * }
 where *errorCode* is your custom code (it can be based on http status and requested resource - certificate or tag)
 4. Change single field of gift certificate (e.g. implement the possibility to change only duration of a certificate or only price).
 5. Implement only get operations for user entity.
